@@ -13,8 +13,8 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import Form from "./components/Form";
 import Home from "./Home";
-//import Flex from "./components/Topup";
-import Flex from "./components/Transfer";
+import Flex from "./components/Topup";
+//import Flex from "./components/Transfer";
 
 export default function App() {
   return (

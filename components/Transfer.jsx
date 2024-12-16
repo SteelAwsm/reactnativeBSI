@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState,  } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,12 +7,28 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  TouchableWithoutFeedback,
   SafeAreaView,
+  TextInput,
+  Keyboard,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { Picker } from "@react-native-picker/picker";
 
 const Flex = () => {
-  return (
+    const [amount, setAmount] = useState("100.000");
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
+    const [selectedAccount, setSelectedAccount] = useState("Account 1"); // State to hold selected account
+    const accounts = ["Account 1", "Account 2", "Account 3"]; // List of accounts
+    const [notes, setNotes] = useState("");
+    const [accDestination, setaccDestination] = useState("");
+
+    const handleAccountSelection = (account) => {
+      setSelectedAccount(account); // Update selected account
+      setDropdownVisible(false); // Close dropdown
+    }
+    return (
+<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <SafeAreaView style={{ backgroundColor: "white" }}>
       <StatusBar style="auto" />
       <View style={{ backgroundColor: "" }}>
@@ -55,23 +71,24 @@ const Flex = () => {
           }}
         >
           <View
-            style={{ marginLeft: 0, backgroundColor: "pink", width: "100%" }}
+            style={{ marginLeft: 0, backgroundColor: "", width: "100%" }}
           >
             <Text style={{ color: "gray", paddingVertical: 10 }}>Amount</Text>
             <View style={{ backgroundColor: "", flexDirection: "row" }}>
               <Text style={{ color: "gray" }}>IDR</Text>
-              <Text
+              <TextInput
                 style={{
-                  paddingStart: 6,
-                  color: "gray",
-                  fontSize: 40,
-                  borderBottomColor: "black",
-                  borderBottomWidth: 1,
-                  width: "93%",
+                    paddingStart: 6,
+                    color: "gray",
+                    fontSize: 40,
+                    borderBottomColor: "black",
+                    borderBottomWidth: 1,
+                    width: "93%",
                 }}
-              >
-                100.000
-              </Text>
+                keyboardType="numeric" // Only allow numeric input
+                value={amount} // Bind input to the state
+                onChangeText={(text) => setAmount(text)} // Update the state when input changes
+                />
             </View>
             <View
               style={{
@@ -96,63 +113,143 @@ const Flex = () => {
         </View>
 
         <View
-          style={{
-            flexDirection: "row",
-            elevation: 3, // For Android
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.2,
-            shadowRadius: 4,
-            paddingHorizontal: 20,
-            paddingBottom: 20,
-            paddingTop: 20,
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            marginTop: 10,
-            justifyContent: "space-between",
-            backgroundColor: "white",
-          }}
+        style={{
+          flexDirection: "row",
+          elevation: 3,
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          paddingHorizontal: 20,
+          paddingBottom: 20,
+          paddingTop: 20,
+          alignItems: "center",
+          justifyContent: "space-between",
+          backgroundColor: "white",
+          marginTop: 10,
+        }}
+      >
+        {/* Dropdown button */}
+        <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center" }}
+          onPress={() => setDropdownVisible(!isDropdownVisible)} // Toggle dropdown
         >
-          <Text style={{ width: 150, color: "black", fontSize: 20 }}>
-            BYOND Pay
-          </Text>
-          <Icon name="chevron-down" color="black" size={20} />
-        </View>
+          <Text style={{ fontSize: 20, color: "black" }}>{selectedAccount}</Text>
+          <Icon
+            name={isDropdownVisible ? "chevron-up" : "chevron-down"}
+            size={20}
+            color="black"
+            style={{ marginLeft: 104}}
+          />
+        </TouchableOpacity>
+      </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            elevation: 3, // For Android
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.2,
-            shadowRadius: 4,
-            paddingHorizontal: 20,
-            paddingBottom: 20,
-            paddingTop: 20,
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            marginTop: 10,
-            justifyContent: "space-between",
-            backgroundColor: "white",
-          }}
-        >
-          <View style={{ backgroundColor: "", flexDirection: "column" }}>
-            <Text style={{ color: "gray" }}>Notes</Text>
-            <Text
-              style={{
-                paddingStart: 6,
-                color: "gray",
-                fontSize: 40,
-                borderBottomColor: "black",
-                borderBottomWidth: 1,
-                width: 320,
-              }}
-            ></Text>
-          </View>
+      {/* Dropdown menu */}
+      {isDropdownVisible && (
+        <View style={styles.dropdown}>
+          {accounts.map((account, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.dropdownItem}
+              onPress={() => handleAccountSelection(account)}
+            >
+              <Text style={styles.dropdownText}>{account}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
+      )}
 
-        <View style={{}}>
+<View
+    style={{
+        flexDirection: "row",
+        elevation: 3, // For Android
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+        paddingTop: 20,
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        marginTop: 10,
+        justifyContent: "space-between",
+        backgroundColor: "white",
+    }}
+    >
+    <View style={{ backgroundColor: "", flexDirection: "column" }}>
+        <Text style={{ color: "gray", marginBottom: 10 }}>Acoount Destination</Text>
+        <TextInput
+        style={{
+            paddingStart: 6,
+            color: "black",
+            fontSize: 16,
+            borderBottomColor: "black",
+            borderBottomWidth: 1,
+            width: 320,
+        }}
+        placeholder="Add notes here"
+        placeholderTextColor="gray"
+        value={accDestination}
+        onChangeText={(text) => setaccDestination(text)}
+        multiline
+        />
+    </View>
+    </View>
+    
+    <View
+    style={{
+        flexDirection: "row",
+        elevation: 3, // For Android
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+        paddingTop: 20,
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        marginTop: 10,
+        justifyContent: "space-between",
+        backgroundColor: "white",
+    }}
+    >
+    <View style={{ backgroundColor: "", flexDirection: "column" }}>
+        <Text style={{ color: "gray", marginBottom: 10 }}>Notes</Text>
+        <TextInput
+        style={{
+            paddingStart: 6,
+            color: "black",
+            fontSize: 16,
+            borderBottomColor: "black",
+            borderBottomWidth: 1,
+            width: 320,
+        }}
+        placeholder="Add notes here"
+        placeholderTextColor="gray"
+        value={notes}
+        onChangeText={(text) => setNotes(text)}
+        multiline
+        />
+    </View>
+    </View>
+
+        <View style={{
+             flexDirection: "row",
+             elevation: 3, // For Android
+             shadowOffset: { width: 0, height: 3 },
+             shadowOpacity: 0.2,
+             shadowRadius: 4,
+             paddingHorizontal: 20,
+             paddingBottom: 20,
+             paddingTop: 20,
+             display: "flex",
+             alignItems: "center",
+             width: "100%",
+             marginTop: 10,
+             justifyContent: "space-between",
+             backgroundColor: "white",
+        }}>
           <TouchableOpacity
             style={styles.transferButton}
             onPress={() => console.log("Transfer button pressed")}
@@ -162,6 +259,7 @@ const Flex = () => {
         </View>
       </View>
     </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -197,6 +295,24 @@ const styles = StyleSheet.create({
   },
   negative: {
     color: "red",
+  },
+  dropdown: {
+    backgroundColor: "white",
+    marginHorizontal: 20,
+    borderRadius: 5,
+    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  dropdownItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  dropdownText: {
+    fontSize: 18,
+    color: "black",
   },
 });
 
