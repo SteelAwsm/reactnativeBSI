@@ -14,8 +14,9 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Picker } from "@react-native-picker/picker";
+import Navbar from "../components/Navbar";
 
-const Flex = () => {
+const Transfer = () => {
     const [amount, setAmount] = useState("100.000");
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [selectedAccount, setSelectedAccount] = useState("Account 1"); // State to hold selected account
@@ -257,6 +258,9 @@ const Flex = () => {
             <Text style={styles.buttonText}>Transfer</Text>
           </TouchableOpacity>
         </View>
+        <View>
+      <Navbar navigation={navigation} />
+      </View>
       </View>
     </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -323,4 +327,4 @@ const boxAccount = StyleSheet.create({
   },
 });
 
-export default Flex;
+export default Transfer;

@@ -2,14 +2,71 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image, TextInput, SafeAreaView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
+import Navbar from "../components/Navbar";
+import { useNavigation } from "@react-navigation/native";
+import { topup, currUser } from "../api/restApi";
+ 
+const Topup = () => {
 
-const Flex = () => {
-
-    const [amount, setAmount] = useState("100.000");
-    const [isDropdownVisible, setDropdownVisible] = useState(false);
-    const [selectedAccount, setSelectedAccount] = useState("Account 1"); // State to hold selected account
-    const accounts = ["Account 1", "Account 2", "Account 3"]; // List of accounts
+    const [amount, setAmount] = useState("");
     const [notes, setNotes] = useState("");
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
+    const [selectedValue, setSelectedValue] = useState(""); // State to hold selected account
+    const accounts = ["Account 1", "Account 2", "Account 3"]; // List of accounts
+    const navigation = useNavigation();
+
+    const token = AsyncStorage.getItem('userToken'); // Retrieve the token
+      
+  const fetchUser = async () => {
+    try {
+      const userData = await currUser(token); // Call the currUser API function
+      console.log('userdata', userData)
+      setFullname(userData.fullname ?? 'user'); // Update the fullname state
+      setBalance(userData.balance);   
+    } catch (error) {
+      console.log("Error fetching user data:", error.message);
+      Alert.alert("Error", "Failed to fetch user data");
+    }
+  };
+
+  console.log(token)  
+
+    const handleSubmit = async () => {
+      try {
+        // Ensure all fields are filled
+        if (!amount || !selectedValue || !notes) {
+          Alert.alert("Error", "All fields must be filled");
+          return;
+        }
+  
+        // Call the top-up API
+        const result = await topup(
+          String(session),
+          String(amount),
+          String(selectedValue),
+          String(userData?.user_id),
+          String(notes)
+        );
+  
+        // If successful, clear all state values and navigate
+        if (result) {
+          setAmount("");
+          setSelectedValue("");
+          setNotes("");
+          Alert.alert("Success", "Top-up successful!");
+          router.replace("/");
+       
+        }
+      } catch (err) {
+        console.error("Top-up error:", err);
+        Alert.alert("Error", "An error occurred while processing the top-up");
+      }
+    };
+  
+    useEffect(() => {
+      fetchUser();
+    }, [token]);
+
 
   return (
 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -108,7 +165,7 @@ const Flex = () => {
           style={{ flexDirection: "row", alignItems: "center" }}
           onPress={() => setDropdownVisible(!isDropdownVisible)} // Toggle dropdown
         >
-          <Text style={{ fontSize: 20, color: "black" }}>{selectedAccount}</Text>
+          <Text style={{ fontSize: 20, color: "black" }}>{selectedValue}</Text>
           <Icon
             name={isDropdownVisible ? "chevron-up" : "chevron-down"}
             size={20}
@@ -195,7 +252,11 @@ const Flex = () => {
           </TouchableOpacity>
         </View>
 
+        <View>
       </View>
+        
+      </View>
+      <Navbar navigation={navigation} />
       </SafeAreaView>
       </TouchableWithoutFeedback>
   );
@@ -264,4 +325,4 @@ const boxAccount = StyleSheet.create({
   },
 });
 
-export default Flex;
+export default Topup;
